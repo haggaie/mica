@@ -288,7 +288,7 @@ benchmark(benchmark_mode_t benchmark_mode, size_t num_threads, size_t batch_size
 	char *rte_argv[] = {"", "-c", cpu_mask_str, "-m", memory_str, "-n", "4"};
 	int rte_argc = sizeof(rte_argv) / sizeof(rte_argv[0]);
 
-    rte_set_log_level(RTE_LOG_NOTICE);
+    // rte_set_log_level(RTE_LOG_NOTICE);
 
 	int ret = rte_eal_init(rte_argc, rte_argv);
 	if (ret < 0)

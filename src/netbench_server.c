@@ -1588,7 +1588,7 @@ mehcached_benchmark_server(const char *machine_filename, const char *server_name
     int rte_argc = sizeof(rte_argv) / sizeof(rte_argv[0]);
 
     //rte_set_log_level(RTE_LOG_DEBUG);
-    rte_set_log_level(RTE_LOG_NOTICE);
+    //rte_set_log_level(RTE_LOG_NOTICE);
 
     int ret = rte_eal_init(rte_argc, rte_argv);
     if (ret < 0)

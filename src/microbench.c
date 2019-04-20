@@ -360,7 +360,7 @@ benchmark(const concurrency_mode_t concurrency_mode, double zipf_theta, double m
 	char *rte_argv[] = {"", "-c", cpu_mask_str, "-m", memory_str, "-n", "4"};
 	int rte_argc = sizeof(rte_argv) / sizeof(rte_argv[0]);
 
-    rte_set_log_level(RTE_LOG_NOTICE);
+    // rte_set_log_level(RTE_LOG_NOTICE);
 
 	int ret = rte_eal_init(rte_argc, rte_argv);
 	if (ret < 0)
