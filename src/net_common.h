@@ -57,8 +57,5 @@ mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint16_t *out_num_
 void
 mehcached_free_network(uint64_t port_mask);
 
-bool
-mehcached_set_dst_port_mask(uint8_t port_id, uint16_t l4_dst_port_mask);
-
-bool
+struct rte_flow *
 mehcached_set_dst_port_mapping(uint8_t port_id, uint16_t l4_dst_port, uint32_t lcore);

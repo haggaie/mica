@@ -27,6 +27,7 @@
 #include <rte_log.h>
 #include <rte_errno.h>
 #include <rte_debug.h>
+#include <rte_flow.h>
 
 // estimated memory use by mbuf pool (per numa node): MEHCACHED_MBUF_ENTRY_SIZE * MEHCACHED_MBUF_SIZE
 #define MEHCACHED_MBUF_ENTRY_SIZE (2048 + sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM)
@@ -563,24 +564,7 @@ mehcached_free_network(uint64_t port_mask)
 	}
 }
 
-bool
-mehcached_set_dst_port_mask(uint8_t port_id, uint16_t l4_dst_port_mask)
-{
-	struct rte_fdir_masks mask;
-	memset(&mask, 0, sizeof(mask));
-	mask.dst_port_mask = l4_dst_port_mask;	// this must be little-endian (host)
-
-	int ret = rte_eth_dev_fdir_set_masks(port_id, &mask);
-	if (ret < 0)
-	{
-		fprintf(stderr, "failed to set perfect filter mask on port %hhu (err=%d)\n", port_id, ret);
-		return false;
-	}
-
-	return true;
-}
-
-bool
+struct rte_flow *
 mehcached_set_dst_port_mapping(uint8_t port_id, uint16_t l4_dst_port, uint32_t lcore)
 {
 	// uint16_t queue = mehcached_lcore_to_queue[lcore];
@@ -591,19 +575,46 @@ mehcached_set_dst_port_mapping(uint8_t port_id, uint16_t l4_dst_port, uint32_t l
 	// }
 	uint16_t queue = (uint16_t)lcore;
 
-	struct rte_fdir_filter filter;
-	memset(&filter, 0, sizeof(filter));
-	filter.iptype = RTE_FDIR_IPTYPE_IPV4;
-	filter.l4type = RTE_FDIR_L4TYPE_UDP;
-	filter.port_dst = rte_cpu_to_be_16((uint16_t)l4_dst_port);    // this must be big-endian
-    uint16_t soft_id = (uint16_t)l4_dst_port;	// will be unique on each port (with perfect filter)
+	struct rte_flow_attr attr = {
+		.ingress = 1,
+	};
+	struct rte_flow_item_udp udp_spec = {
+		.hdr = {
+			.dst_port = rte_cpu_to_be_16((uint16_t)l4_dst_port),
+		}
+	}, udp_mask = {
+		.hdr = {
+			.dst_port = 0xffff,
+		},
+	};
+	struct rte_flow_item patterns[] = {
+		{
+			.type = RTE_FLOW_ITEM_TYPE_IPV4, 
+		},
+		{
+			.type = RTE_FLOW_ITEM_TYPE_UDP, 
+			.spec = &udp_spec,
+			.mask = &udp_mask,
+		},
+		{ .type = RTE_FLOW_ITEM_TYPE_END, }
+	};
+	struct rte_flow_action_queue action = {
+		.index = queue,
+	};
+	struct rte_flow_action actions[] = {
+		{
+			.type = RTE_FLOW_ACTION_TYPE_QUEUE,
+			.conf = &action,
+		},
+		{
+			.type = RTE_FLOW_ACTION_TYPE_END, }
+	};
 
-	int ret = rte_eth_dev_fdir_add_perfect_filter(port_id, &filter, soft_id, (uint8_t)queue, 0);
-	if (ret < 0)
+	struct rte_flow *flow = rte_flow_create(port_id, &attr, patterns, actions, NULL);
+	if (!flow)
 	{
-		fprintf(stderr, "failed to add perfect filter entry on port %hhu (err=%d)\n", port_id, ret);
-		return false;
+		fprintf(stderr, "failed to set perfect filter mask on port %hhu (err=%s)\n", port_id, rte_strerror(rte_errno));
 	}
 
-	return true;
+	return flow;
 }

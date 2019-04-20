@@ -1631,12 +1631,6 @@ mehcached_benchmark_server(const char *machine_filename, const char *server_name
     uint8_t hot_item_id;
 #endif
 
-    for (port_id = 0; port_id < server_conf->num_ports; port_id++)
-    {
-        if (!mehcached_set_dst_port_mask(port_id, 0xffff))
-            return;
-    }
-
     for (partition_id = 0; partition_id < server_conf->num_partitions; partition_id++)
     {
         server_conf->partitions[partition_id].thread_id %= (uint8_t)(server_conf->num_threads >> cpu_mode);

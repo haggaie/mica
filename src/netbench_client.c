@@ -1433,12 +1433,6 @@ mehcached_benchmark_client(const char *machine_filename, const char *client_name
 
     printf("configuring mappings\n");
 
-    for (port_id = 0; port_id < client_conf->num_ports; port_id++)
-    {
-        if (!mehcached_set_dst_port_mask(port_id, 0xffff))
-            return;
-    }
-
     for (thread_id = 0; thread_id < client_conf->num_threads; thread_id++)
     {
         for (port_id = 0; port_id < client_conf->num_ports; port_id++)
