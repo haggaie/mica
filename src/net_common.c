@@ -54,13 +54,6 @@ static const struct rte_eth_conf mehcached_port_conf = {
 	.rxmode = {
         .max_rx_pkt_len = ETHER_MAX_LEN,
 		.split_hdr_size = 0,
-		.header_split   = 0, /**< Header Split disabled. */
-		.hw_ip_checksum = 0, /**< IP checksum offload disabled. */
-		.hw_vlan_filter = 1, /**< VLAN filtering enabled. */
-		.hw_vlan_strip  = 1, /**< VLAN strip enabled. */
-		.hw_vlan_extend = 0, /**< Extended VLAN disabled. */
-		.jumbo_frame    = 0, /**< Jumbo Frame Support disabled. */
-		.hw_strip_crc   = 0, /**< CRC stripped by hardware disabled. */
 		.mq_mode = ETH_MQ_RX_NONE,
 	},
 	.txmode = {
@@ -76,7 +69,6 @@ static const struct rte_eth_conf mehcached_port_conf = {
 #else
 		.status =           RTE_FDIR_REPORT_STATUS_ALWAYS,
 #endif
-		.flexbytes_offset = 0,
 		.drop_queue =       0,
 	},
 };
@@ -99,11 +91,6 @@ static const struct rte_eth_txconf mehcached_tx_conf = {
 	},
 	.tx_free_thresh = 0, /* Use PMD default values */
 	.tx_rs_thresh = 0, /* Use PMD default values */
-#ifndef MEHCACHED_USE_SOFT_FDIR
-    .txq_flags = (ETH_TXQ_FLAGS_NOMULTSEGS | ETH_TXQ_FLAGS_NOREFCOUNT | ETH_TXQ_FLAGS_NOMULTMEMP | ETH_TXQ_FLAGS_NOOFFLOADS),
-#else
-    .txq_flags = (ETH_TXQ_FLAGS_NOMULTSEGS | ETH_TXQ_FLAGS_NOREFCOUNT | ETH_TXQ_FLAGS_NOOFFLOADS),
-#endif
 };
 
 
