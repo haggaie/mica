@@ -52,7 +52,7 @@ struct rte_mbuf *
 mehcached_clone_packet(struct rte_mbuf *mbuf_src);
 
 bool
-mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint8_t *out_num_ports);
+mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint16_t *out_num_ports);
 
 void
 mehcached_free_network(uint64_t port_mask);

@@ -335,7 +335,7 @@ mehcached_clone_packet(struct rte_mbuf *mbuf_src)
 }
 
 bool
-mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint8_t *out_num_ports)
+mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint16_t *out_num_ports)
 {
 	int ret;
 	size_t i;
@@ -407,7 +407,7 @@ mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint8_t *out_num_p
 	// TODO: initialize and set up timer for forced TX
 
 	// check port and queue limits
-	uint8_t num_ports = rte_eth_dev_count();
+	uint16_t num_ports = rte_eth_dev_count();
 	printf("found %hu ports\n", num_ports);
 	assert(num_ports <= MEHCACHED_MAX_PORTS);
 	*out_num_ports = num_ports;
@@ -542,7 +542,7 @@ void
 mehcached_free_network(uint64_t port_mask)
 {
 	uint8_t port_id;
-	uint8_t num_ports = rte_eth_dev_count();
+	uint16_t num_ports = rte_eth_dev_count();
 	
 	for (port_id = 0; port_id < num_ports; port_id++)
 	{

@@ -1598,7 +1598,7 @@ mehcached_benchmark_server(const char *machine_filename, const char *server_name
     }
 
 #ifndef MEHCACHED_USE_IB
-    uint8_t num_ports_max;
+    uint16_t num_ports_max;
 	uint64_t port_mask = 0;
     uint8_t port_id;
 	for (port_id = 0; port_id < server_conf->num_ports; port_id++)
