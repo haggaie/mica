@@ -1590,6 +1590,16 @@ mehcached_benchmark_server(const char *machine_filename, const char *server_name
     //rte_set_log_level(RTE_LOG_DEBUG);
     //rte_set_log_level(RTE_LOG_NOTICE);
 
+    printf("rte_eal_init(");
+    int i;
+    for (i = 0; i < rte_argc; ++i)
+    {
+	printf(rte_argv[i]);
+        if (i < rte_argc - 1)
+            printf(", ");
+    }
+    printf(")\n");
+
     int ret = rte_eal_init(rte_argc, rte_argv);
     if (ret < 0)
     {
