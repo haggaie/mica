@@ -1,6 +1,8 @@
 build/CMakeCache.txt
 build/CMakeFiles
 build/src
+build/conf_*
+build/analysis_*
 Makefile
 cmake_install.cmake
 
