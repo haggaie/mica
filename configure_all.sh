@@ -20,5 +20,10 @@ cd "$(dirname $0)/build" || exit 1
 
 rm -f CMakeCache.txt
 
-NDEBUG=yes cmake ..
+cmake=$(which cmake3 2> /dev/null)
+if [[ -z "$cmake" ]] ; then
+	cmake=cmake
+fi
+
+NDEBUG=yes "$cmake" ..
 
