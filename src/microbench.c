@@ -352,7 +352,7 @@ benchmark(const concurrency_mode_t concurrency_mode, double zipf_theta, double m
 	for (thread_id = 0; thread_id < num_threads; thread_id++)
 		cpu_mask |= (uint64_t)1 << thread_id;
 	char cpu_mask_str[10];
-	snprintf(cpu_mask_str, sizeof(cpu_mask_str), "%zx", cpu_mask);
+	snprintf(cpu_mask_str, sizeof(cpu_mask_str), "0x%zx", cpu_mask);
 
     char memory_str[10];
 	snprintf(memory_str, sizeof(memory_str), "%zu", (num_pages_to_try - num_pages_to_reserve) * 2);   // * 2 is because the used huge page size is 2 MB

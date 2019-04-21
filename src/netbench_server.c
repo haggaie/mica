@@ -1575,7 +1575,7 @@ mehcached_benchmark_server(const char *machine_filename, const char *server_name
 	for (thread_id = 0; thread_id < server_conf->num_threads; thread_id++)
 		cpu_mask |= (uint64_t)1 << thread_id;
     char cpu_mask_str[100];
-    snprintf(cpu_mask_str, sizeof(cpu_mask_str), "%lx", cpu_mask);
+    snprintf(cpu_mask_str, sizeof(cpu_mask_str), "0x%lx", cpu_mask);
 
     char memory_str[10];
     snprintf(memory_str, sizeof(memory_str), "%zu", (num_pages_to_try - num_pages_to_reserve) * 2);   // * 2 is because the used huge page size is 2 MB

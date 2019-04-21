@@ -1385,7 +1385,7 @@ mehcached_benchmark_client(const char *machine_filename, const char *client_name
 	for (thread_id = 0; thread_id < client_conf->num_threads; thread_id++)
 		cpu_mask |= (uint64_t)1 << thread_id;
 	char cpu_mask_str[100];
-	snprintf(cpu_mask_str, sizeof(cpu_mask_str), "%lx", cpu_mask);
+	snprintf(cpu_mask_str, sizeof(cpu_mask_str), "0x%lx", cpu_mask);
 
 	char *rte_argv[] = {"",
 		"-c", cpu_mask_str,
