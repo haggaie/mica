@@ -344,6 +344,12 @@ mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint16_t *out_num_
 	size_t num_numa_nodes = 0;
 	uint16_t num_queues = 0;
 
+	// check port and queue limits
+	uint16_t num_ports = rte_eth_dev_count();
+	printf("found %hu ports\n", num_ports);
+	assert(num_ports <= MEHCACHED_MAX_PORTS);
+	*out_num_ports = num_ports;
+
 	assert(rte_lcore_count() <= MEHCACHED_MAX_LCORES);
 
 	// count required queues
@@ -368,10 +374,10 @@ mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint16_t *out_num_
 	{
 		//const unsigned int desc_per_queue = (unsigned int)mehcached_next_power_of_two((size_t)mehcached_num_rx_desc + (size_t)mehcached_num_tx_desc + MEHCACHED_MAX_PKT_BURST);
 		const unsigned int desc_per_queue = (unsigned int)((size_t)mehcached_num_rx_desc + (size_t)mehcached_num_tx_desc + MEHCACHED_MAX_PKT_BURST);
-		const unsigned int mbuf_size = MEHCACHED_MAX_PORTS * MEHCACHED_MAX_QUEUES * desc_per_queue;
+		const unsigned int mbuf_size = num_ports * MEHCACHED_MAX_QUEUES * desc_per_queue;
 		const size_t total_size = (size_t)mbuf_size * (size_t)((MEHCACHED_MBUF_ENTRY_SIZE + 63) / 64 * 64);
 
-		const unsigned int cache_size = MEHCACHED_MAX_PORTS * desc_per_queue;
+		const unsigned int cache_size = num_ports * desc_per_queue;
 
 		printf("allocating pktmbuf on node %zu (total size: %.2lf MiB, cache count: %u)...\n", i, (double)total_size / 1048576., cache_size);
 		char pool_name[64];
@@ -406,12 +412,6 @@ mehcached_init_network(uint64_t cpu_mask, uint64_t port_mask, uint16_t *out_num_
 */
 
 	// TODO: initialize and set up timer for forced TX
-
-	// check port and queue limits
-	uint16_t num_ports = rte_eth_dev_count();
-	printf("found %hu ports\n", num_ports);
-	assert(num_ports <= MEHCACHED_MAX_PORTS);
-	*out_num_ports = num_ports;
 
 	printf("checking queue limits\n");
 	uint8_t port_id;
