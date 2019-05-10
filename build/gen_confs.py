@@ -672,6 +672,28 @@ def main(cluster, profiling_flag):
 
         ib_memcached_address = 'node-1.mica.fawn.apt.emulab.net'
 
+    elif cluster.startswith('technion'):
+        # One ConnectX / Innova on every server / client
+        numa = cluster.split('-')[1] == 'numa'
+        core_count = int(cluster.split('-')[2])
+        port_count = 1
+
+        num_server_threads = numa and 12 or 6
+
+        if core_count < 1 or core_count > num_server_threads:
+            assert False, 'not support core count: %d' % core_count
+
+        num_server_ports = port_count
+        ports = range(port_count)
+
+        server_core_to_port_affinity = [ports] * num_server_threads
+        num_partitions = core_count
+        partition_to_core_affinity = list(range(0, core_count))
+
+        num_client_threads = 6
+        num_client_ports = 1
+        client_core_to_port_affinity = [list(range(num_client_ports))] * num_client_threads
+
     else:
         assert False, 'unrecognized cluster: %s' % cluster
 
@@ -811,10 +833,12 @@ if __name__ == '__main__':
         print('intel-direct-one-domain-CORE-PORT   CORE: 4, 8                   PORT: 4, 8     (=CORE)')
         print('intel-direct-two-domains-CORE-PORT  CORE: 4, 8, 16               PORT: 4, 8, 16 (=CORE)')
         print('intel-two-to-one-CORE-PORT          CORE: 4, 8, ..., 16, 20      PORT: 2, ..., 10 (=CORE/2)')
+        print('technion-single-CORE                CORE: 1, ..., 6')
+        print('technion-numa-CORE                  CORE: 1, ..., 12')
         sys.exit(1)
 
     if (len(sys.argv) == 1):
-        cluster = 'intel-two-to-one-24-12'
+        cluster = 'technion-single-6'
     else:
         cluster = sys.argv[1]
     
